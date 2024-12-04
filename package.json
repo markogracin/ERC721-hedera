@@ -1,0 +1,30 @@
+{
+  "name": "smart-contracts",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "clean": "npx hardhat clean && rm -rf cache artifacts typechain-types",
+    "compile": "npx hardhat compile",
+    "deploy": "ts-node scripts/deploy.ts",
+    "deploy:fresh": "npm run clean && npm run compile && npm run deploy",
+    "test": "npx hardhat test",
+    "generate": "npx hardhat && npm install",
+    "verify": "npx hardhat verify",
+    "cache:clear": "npm cache clean --force && rm -rf node_modules && npm install",
+    "prepare": "npm run clean && npm run compile"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.3"
+  },
+  "private": true,
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@hashgraph/sdk": "^2.54.2",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "dotenv": "^16.4.7",
+    "hardhat": "^2.22.17"
+  }
+}
