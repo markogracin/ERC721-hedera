@@ -12,7 +12,8 @@
     "generate": "npx hardhat && npm install",
     "verify": "npx hardhat verify",
     "cache:clear": "npm cache clean --force && rm -rf node_modules && npm install",
-    "prepare": "npm run clean && npm run compile"
+    "prepare": "npm run clean && npm run compile",
+    "get-contracts": "ts-node scripts/get-contracts.ts"
   },
   "devDependencies": {
     "typescript": "^5.5.3"
@@ -26,6 +27,7 @@
     "@hashgraph/sdk": "^2.54.2",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "@openzeppelin/contracts": "^5.1.0",
+    "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "hardhat": "^2.22.17"
   }
