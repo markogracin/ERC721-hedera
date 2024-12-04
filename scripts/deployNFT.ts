@@ -3,8 +3,9 @@ import {
     PrivateKey,
     AccountId,
     FileCreateTransaction,
+    FileAppendTransaction,
     ContractCreateTransaction,
-    Hbar, FileAppendTransaction,
+    Hbar,
 } from "@hashgraph/sdk";
 import dotenv from 'dotenv';
 import fs from 'fs';
@@ -27,29 +28,34 @@ async function deployNFTContract() {
     try {
         console.log('🚀 Starting NFT contract deployment process...');
 
+        // Create file
         console.log('\n📝 Creating file on Hedera...');
         const fileCreateTx = await new FileCreateTransaction()
             .setKeys([operatorKey.publicKey])
-            .setMaxTransactionFee(new Hbar(5)) // Increased from 2
+            .setMaxTransactionFee(new Hbar(5))
             .execute(client);
 
         const fileReceipt = await fileCreateTx.getReceipt(client);
         const bytecodeFileId = fileReceipt.fileId;
 
         if(!bytecodeFileId) {
-            console.error('\n❌ A znas.:');
-            return
+            console.error('❌ Failed to create bytecode file - no file ID received');
+            return;
         }
 
-// Split the bytecode into chunks of 4000 bytes
+        console.log(`✅ Contract bytecode file created with ID: ${bytecodeFileId}`);
+
+        // Append contents in chunks
+        console.log('\n📤 Uploading contract bytecode in chunks...');
         const chunkSize = 4000;
         const bytecodeChunks = [];
         for (let i = 0; i < contractBytecode.length; i += chunkSize) {
             bytecodeChunks.push(contractBytecode.slice(i, i + chunkSize));
         }
 
-// Append each chunk
-        for (const chunk of bytecodeChunks) {
+        for (let i = 0; i < bytecodeChunks.length; i++) {
+            const chunk = bytecodeChunks[i];
+            console.log(`Uploading chunk ${i + 1} of ${bytecodeChunks.length}...`);
             const appendTx = await new FileAppendTransaction()
                 .setFileId(bytecodeFileId)
                 .setContents(chunk)
@@ -58,22 +64,17 @@ async function deployNFTContract() {
             await appendTx.getReceipt(client);
         }
 
-        if(!bytecodeFileId) {
-            console.error('❌ Failed to create bytecode file - no file ID received');
-            return;
-        }
-
-        console.log(`✅ Contract bytecode file created with ID: ${bytecodeFileId}`);
         console.log(`🔍 View file on HashScan: https://hashscan.io/testnet/file/${bytecodeFileId}`);
 
+        // Create contract
         console.log('\n⚙️  Creating NFT contract...');
         const contractTx = await new ContractCreateTransaction()
             .setBytecodeFileId(bytecodeFileId)
-            .setGas(1000000) // Increased gas limit for NFT contract
+            .setGas(1000000)
+            .setAdminKey(operatorKey)  // Set the admin key to the operator's key
             .setMaxTransactionFee(new Hbar(20))
             .execute(client);
 
-        // Wait for the transaction to be processed
         await new Promise(resolve => setTimeout(resolve, 2000));
 
         const contractReceipt = await contractTx.getReceipt(client);
