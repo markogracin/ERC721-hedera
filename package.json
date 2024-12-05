@@ -3,17 +3,16 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "clean": "npx hardhat clean && rm -rf cache artifacts typechain-types",
-    "compile": "npx hardhat compile",
-    "deploy": "ts-node scripts/deploy.ts",
-    "deployNFT": "ts-node scripts/deployNFT.ts",
-    "deploy:fresh": "npm run clean && npm run compile && npm run deploy",
-    "test": "npx hardhat test",
-    "generate": "npx hardhat && npm install",
-    "verify": "npx hardhat verify",
-    "cache:clear": "npm cache clean --force && rm -rf node_modules && npm install",
     "prepare": "npm run clean && npm run compile",
-    "get-contracts": "ts-node scripts/get-contracts.ts"
+    "create-collection": "ts-node scripts/create-collection.ts",
+    "get-collections": "ts-node scripts/get-collections.ts",
+
+    "clean": "npx hardhat clean && rm -rf cache artifacts typechain-types",
+    "cache:clear": "npm cache clean --force && rm -rf node_modules",
+
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test",
+    "verify": "npx hardhat verify"
   },
   "devDependencies": {
     "typescript": "^5.5.3"

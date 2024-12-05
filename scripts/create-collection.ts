@@ -12,13 +12,13 @@ import fs from 'fs';
 
 dotenv.config();
 
-async function deployNFTContract() {
+async function createCollection() {
     if (!process.env.OPERATOR_PRIVATE_KEY || !process.env.OPERATOR_ACCOUNT_ID) {
         throw new Error('Environment variables OPERATOR_PRIVATE_KEY and OPERATOR_ACCOUNT_ID must be present');
     }
 
     const contractBytecode = JSON.parse(
-        fs.readFileSync('artifacts/contracts/NFTCollection.sol/NFTCollection.json', 'utf8')
+        fs.readFileSync('artifacts/contracts/CreateCollection.sol/CreateCollection.json', 'utf8')
     ).bytecode;
 
     const operatorKey = PrivateKey.fromString(process.env.OPERATOR_PRIVATE_KEY);
@@ -102,7 +102,7 @@ async function deployNFTContract() {
     }
 }
 
-deployNFTContract()
+createCollection()
     .then((contractId) => {
         if (contractId) {
             console.log('\n🎉 NFT Contract deployment completed successfully!');

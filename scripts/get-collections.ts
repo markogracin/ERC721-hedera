@@ -85,7 +85,7 @@ async function getContractsForAccount() {
                 transactiontype: 'CONTRACTCREATEINSTANCE',
                 order: 'desc',
                 result: 'SUCCESS',
-                limit: 5  // Increased limit to show more contracts
+                // limit: 5  todo check if limit is needed
             }
         });
 
