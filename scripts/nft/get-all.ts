@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import axios from 'axios';
 import path from 'path';
 
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 function decodeHexString(hex: string): string {
     // Remove '0x' prefix if present
@@ -134,9 +134,10 @@ View on HashScan: https://hashscan.io/testnet/contract/${contractId}
 
 getContractsForAccount()
     .then(() => {
-        console.log('\n✅ Contract fetch completed');
+        console.log('\n✅ Contract fetch completed successfully');
         process.exit(0);
     })
     .catch((error) => {
-        process.exit(1);
+        console.error('❌ Error:', error);
+        throw error;
     });

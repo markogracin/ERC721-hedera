@@ -3,8 +3,18 @@ pragma solidity ^0.8.28;
 
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-contract CreateCollection is ERC721, Ownable {
+// todo add metadata to chain, image on IPFS?
+// todo pause/resume?
+
+contract DeployCollection is ERC721, Ownable {
+    using SafeERC20 for IERC20;
+
+    // Immutable BIDI token contract reference
+    IERC20 immutable public bidi;
+
     // Mapping from token ID to redemption amount
     mapping(uint256 => uint256) private _redemptionAmounts;
 
@@ -17,13 +27,17 @@ contract CreateCollection is ERC721, Ownable {
     error TokenAlreadyRedeemed(uint256 tokenId);
     error NotTokenOwner(uint256 tokenId, address caller);
 
-    constructor() ERC721("LeNFT Collection", "LeNEC") Ownable(msg.sender) {}
+    constructor(IERC20 bidi_) ERC721("LeNFT Collection", "LeNEC") Ownable(msg.sender) {
+        bidi = bidi_;
+    }
 
-    function mint(address to, uint256 amount) public onlyOwner returns (uint256) {
+    function safeMint(address to, uint256 amount) public onlyOwner {
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
         _redemptionAmounts[tokenId] = amount;
-        return tokenId;
+
+        // Transfer BIDI tokens from sender to this contract
+        bidi.safeTransferFrom(msg.sender, address(this), amount);
     }
 
     function redeem(uint256 tokenId) public {
@@ -40,8 +54,11 @@ contract CreateCollection is ERC721, Ownable {
         // Effect: mark as redeemed before interaction
         _redeemed[tokenId] = true;
 
-        // Later we'll add the token transfer logic here
-        // For now we'll just have the redemption tracking
+        // Get redemption amount
+        uint256 amount = _redemptionAmounts[tokenId];
+
+        // Transfer BIDI tokens to redeemer
+        bidi.safeTransfer(msg.sender, amount);
     }
 
     function isRedeemed(uint256 tokenId) public view returns (bool) {

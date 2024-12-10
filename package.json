@@ -4,8 +4,9 @@
   "main": "dist/index.js",
   "scripts": {
     "prepare": "npm run clean && npm run compile",
-    "create-collection": "ts-node scripts/create-collection.ts",
-    "get-collections": "ts-node scripts/get-collections.ts",
+    "create-token": "ts-node scripts/token/create.ts",
+    "deploy-collection": "ts-node scripts/nft/deploy.ts",
+    "get-collections": "ts-node scripts/nft/get-all.ts",
 
     "clean": "npx hardhat clean && rm -rf cache artifacts typechain-types",
     "cache:clear": "npm cache clean --force && rm -rf node_modules",
